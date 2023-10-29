@@ -1,0 +1,10 @@
+body {
+    /* background-color: #fafafa; */
+    background-image: url('/white-triangle.jpeg');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    /* 这会确保图片覆盖整个 viewport */
+    background-attachment: fixed;
+    /* 这会确保图片随着页面的滚动而固定 */
+}
