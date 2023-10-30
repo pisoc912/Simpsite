@@ -3,8 +3,11 @@ import { Box, Button, TextField, Typography, Paper, Avatar, Container } from '@m
 import { useRouter } from 'next/router';
 import authServiceInstance from '@/utils/AuthService';
 import { useUser } from '@/context/UserContext';
+import useAuthService from '@/utils/AuthService';
 
 const LoginPage = () => {
+    const { register, login, logout } = useAuthService();
+
     const [user, setUser] = useState({
         email: '',
         pwd: '',
@@ -23,7 +26,7 @@ const LoginPage = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         console.log(user);
-        authServiceInstance.login(user.email, user.pwd).then(response => {
+        login(user.email, user.pwd).then(response => {
             if (response) {
                 console.log(response.email);
                 setCurrentUser({ name: response.email })

@@ -1,13 +1,13 @@
 import React from 'react'
 import LoginPage from '../components/LoginPage'
-import AppAppBar from '@/components/Appbar'
+import NavBar from '@/components/NavBar'
 
 const Login = () => {
 
     return (
 
         <div>
-            <AppAppBar />
+            <NavBar />
             <LoginPage />
         </div>
     )

@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { Router, useRouter } from 'next/router';
-import { Box, Button, TextField, Typography, Paper, Avatar, Container } from '@mui/material';
+import { Box, Button, TextField, Typography, Paper, Avatar, Container, Backdrop, CircularProgress } from '@mui/material';
 import * as yup from 'yup';
 import AuthService from '@/utils/AuthService';
+import useAuthService from '@/utils/AuthService';
 
 // const RegisterSchema = yup.object().shape({
 //     username: yup.string().min(2, "Username too short.").required('Username is required.'),
@@ -17,8 +18,12 @@ const RegisterPage = () => {
         pwd: '',
         roles: []
     });
+    const { register } = useAuthService()
+    const [loading, setLoading] = useState(false)
+    const [message, setMessage] = useState('')
     const [error, setError] = useState('')
     const router = useRouter()
+
 
     const handleChange = (e) => {
         console.log(e.target.name);
@@ -31,33 +36,20 @@ const RegisterPage = () => {
     const handleRegister = async (e) => {
         e.preventDefault();
         console.log(user);
-        registerUser(user, setError)
+        register(user, setLoading).then(response => {
+            setMessage(response)
+            router.push('/login')
+        }).catch(err => {
+            const resMessage = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+            setError(resMessage);
+        })
     }
-
-    // const handleRegister = (e) => {
-    //     e.preventDefault()
-    //     AuthService.register(user.username, user.email, user.pwd, user.roles)
-    //         .then(() => {
-    //             router.push("/login");
-    //         })
-    //         .catch(err => {
-    //             const resMessage = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
-    //             setError(resMessage);
-    //         })
-    // }
 
     return (
         <Container>
             <Box display="flex" flexDirection="column" justifyContent="center" px={6} py={12}>
                 <Box mx="auto">
                     <Typography variant="h4" mt={5} color={"#4FB891"} textAlign="center">Sign Up to your account</Typography>
-                    <TextField
-                        label="With normal TextField"
-                        id="outlined-start-adornment"
-                        fullWidth
-                        sx={{ m: 1 }}
-
-                    />
                 </Box>
                 <Box variant="outlined" mt={5} sx={{ px: 40 }} >
                     <form noValidate autoComplete="off" onSubmit={handleRegister} spacing={3}>
@@ -111,6 +103,13 @@ const RegisterPage = () => {
                             <Button fullWidth variant="contained" type="submit" sx={{ bgcolor: "#4FB891" }}>
                                 Register
                             </Button>
+                            <Backdrop
+                                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                                open={loading}
+                            >
+
+                                {message ? <Typography>{message}</Typography> : <CircularProgress color="inherit" />}
+                            </Backdrop>
                         </Box>
                     </form>
                 </Box>

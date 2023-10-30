@@ -1,15 +1,16 @@
 import About from "@/components/AboutPage";
-import AppAppBar from "@/components/Appbar";
+import NavBar from "@/components/NavBar";
 import HomePage from "@/components/HomePage";
 import ShortenWrapper from "@/components/ShortenWrapper";
-import { UserProvider } from "@/context/UserContext";
+import { UserProvider, useUser } from "@/context/UserContext";
+import { useEffect } from "react";
+import Price from "./price";
 
 
 function Home() {
   return (
-
     <>
-      <AppAppBar />
+      <NavBar />
       <HomePage />
       <ShortenWrapper />
     </>

@@ -1,11 +1,11 @@
 import React from 'react'
 import RegisterPage from '../components/RegisterPage'
-import AppAppBar from '@/components/Appbar'
+import NavBar from '@/components/NavBar'
 
 const register = () => {
     return (
         <>
-            <AppAppBar />
+            <NavBar />
             <RegisterPage />
         </>
     )

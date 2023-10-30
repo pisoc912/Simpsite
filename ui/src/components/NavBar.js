@@ -1,9 +1,10 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
-import { AppBar, Toolbar, Typography } from '@mui/material';
+import { AppBar, Button, Toolbar, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useUser } from '@/context/UserContext';
+import useAuthService from '@/utils/AuthService';
 
 const rightLink = {
     fontSize: 16,
@@ -19,23 +20,29 @@ const links = [
     { href: '/price', text: 'Price', style: { fontSize: 20, px: 4, '&:hover': { color: '#99F224' } } },
 ];
 
-function AppAppBar() {
+function NavBar() {
     const { currentUser } = useUser()
-    console.log({ currentUser });
+    const { logout } = useAuthService()
     const router = useRouter()
 
-    const renderLink = (href, text, additionalStyles = {}) => (
+    const renderLink = (href, text, additionalStyles, idx) => (
         <Link
+            key={idx}
             variant="h6"
             underline="none"
             color={router.asPath === href ? '#35EBA9' : "white"}
             href={href}
             sx={{ ...additionalStyles, '&:hover': { color: '#35EBA9' } }}
-
         >
             {text}
         </Link>
     );
+
+    const handleSignOut = () => {
+        logout()
+        router.push("/")
+    }
+
 
     return (
         <div>
@@ -45,12 +52,15 @@ function AppAppBar() {
                         {renderLink(null, 'Simpsite', { fontSize: 24 })}
                     </Box>
                     <Box sx={{ display: 'flex', flex: 1, justifyContent: 'space-around' }}>
-                        {links.map(link => renderLink(link.href, link.text, link.style))}
+                        {links.map((link, idx) => renderLink(link.href, link.text, link.style, idx))}
                     </Box>
 
-                    <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
+                    <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                         {currentUser ? (
-                            <Typography>{currentUser.name}</Typography>  // Assuming `user` is an object with a `name` property
+                            <>
+                                <Typography sx={{ mx: 4 }}>Welcome back! {currentUser.email}</Typography>
+                                <Button variant='outlined' onClick={() => handleSignOut()}>Sign Out</Button>
+                            </>
                         ) : (
                             <>
                                 {renderLink('/login', 'Sign In', { ...rightLink, color: router.asPath === '/login' ? '#35EBA9' : "white" })}
@@ -65,4 +75,4 @@ function AppAppBar() {
     );
 }
 
-export default AppAppBar;
+export default NavBar;

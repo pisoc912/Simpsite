@@ -1,62 +1,73 @@
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie';
+import { useUser } from '@/context/UserContext';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_ROOT_URL + '/';
+const API_BASE_URL = 'http://localhost:8080';  // Adjust this based on your configuration
 
-export const getAuthToken = () => {
-    return window.sessionStorage.getItem('XSRF-TOKEN');
-};
+function useAuthService() {
 
-export const setAuthHeader = (token) => {
-    window.sessionStorage.setItem('XSRF-TOKEN', token);
-};
+    const [user, setUser] = useState(null);
 
-axios.defaults.baseURL = 'http://localhost:8080';
-axios.defaults.headers.post['Content-Type'] = 'application/json';
-
-export const request = (method, url, data) => {
-    const headers = {
-        'Authorization': 'Basic ' + window.btoa(data.email + ':' + data.password)
+    const getHeaders = ({ email, password }) => {
+        let headers = {};
+        if (email && password) {
+            headers = {
+                'Authorization': 'Basic ' + window.btoa(email + ':' + password)
+            };
+        } else {
+            const authorization = sessionStorage.getItem('Authorization');
+            if (authorization) {
+                headers = {
+                    'Authorization': authorization
+                };
+            }
+        }
+        console.log(headers);
+        return headers;
     };
-    return axios({
-        method: method,
-        url: url,
-        headers: headers,
-        data: data
-    });
-};
 
-class AuthService {
-    register(username, email, password, role) {
-        return axios.post(API_BASE_URL + 'signup', {
-            username,
-            email,
-            password,
-            role
+    const register = async (user, onLoading) => {
+        onLoading(true)
+        try {
+            const response = await axios.post(API_BASE_URL + '/register', {
+                email: user.email,
+                password: user.pwd,
+                role: 'user',
+            });
+            return response.data;
+        } finally {
+            onLoading(false)
+        }
+    };
+
+    const login = async (email, password) => {
+        const response = await axios.get(API_BASE_URL + '/login', {
+            headers: getHeaders({ email, password }),
+            params: { email, password }  // Assuming login uses query params. Adjust if needed.
         });
-    }
+        console.log("response", response.data.email);
 
-    async login(email, password) {
-        const response = await request("GET", "/login", {
-            email,
-            password
-        })
-        console.log("response", response.data);
-        const xsrf = Cookies.get('XSRF-TOKEN')
-        window.sessionStorage.setItem("XSRF-TOKEN", xsrf)
-        if (response.data.token) {
+        const xsrf = sessionStorage.getItem('XSRF-TOKEN');
+        if (xsrf) {
+            sessionStorage.setItem("XSRF-TOKEN", xsrf);
+        }
+        if (response.data) {
             console.log("login_token", JSON.stringify(response.data));
             localStorage.setItem('user', JSON.stringify(response.data));
-
-
         }
         return response.data;
-    }
+    };
 
-    logout() {
+    const logout = () => {
         localStorage.removeItem('user');
-    }
+    };
+
+    return {
+        user,
+        register,
+        login,
+        logout
+    };
 }
 
-const authServiceInstance = new AuthService();
-export default authServiceInstance;
+export default useAuthService;
