@@ -1,6 +1,6 @@
-# ShortenMe - URL Shortening Service
+# Simpsite - URL Shortening Service
 
-ShortenMe is a robust URL shortening service, akin to Bitly, built on a modern tech stack leveraging Spring Boot for the backend and ReactJS for the frontend. It aims to provide a simple yet efficient way to shorten long URLs for easier sharing and management. With features like rate limiting, comprehensive user security with JWT and OAuth2 via Keycloak, and database migration management with Flyway, ShortenMe stands out as a secure and scalable solution for URL shortening needs.
+Simpsite is a robust URL shortening service, akin to Bitly, built on a modern tech stack leveraging Spring Boot for the backend and ReactJS for the frontend. It aims to provide a simple yet efficient way to shorten long URLs for easier sharing and management. With features like rate limiting, comprehensive user security with JWT and OAuth2 via Keycloak, and database migration management with Flyway, ShortenMe stands out as a secure and scalable solution for URL shortening needs.
 
 ## Features
 
